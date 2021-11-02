@@ -1,5 +1,5 @@
 [package]
-name = "cf-tools"
+name = "cft"
 version = "0.1.0"
 edition = "2018"
 description = "Command line tools for cloudformation stacks"
