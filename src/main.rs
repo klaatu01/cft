@@ -1,5 +1,6 @@
 use clap::{App, Arg};
-use crossterm::style::{Color, ResetColor, SetForegroundColor};
+use colored::*;
+use colored_json::*;
 use cw_parser::{parse_logs, Log, RawCloudWatchLog};
 use minus::{page_all, Pager};
 use std::convert::TryFrom;
@@ -34,23 +35,12 @@ async fn head_logs(stack: String, number: usize) -> Result<(), Box<dyn std::erro
 
             let parsed = parse_logs(cwl);
 
-            writeln!(
-                output,
-                "{}{}{}",
-                SetForegroundColor(Color::Magenta),
-                logs_group,
-                SetForegroundColor(Color::DarkYellow),
-            )?;
+            writeln!(output, "{}", logs_group.as_str().red().bold().underline(),)?;
             for p in parsed.iter() {
                 writeln!(
                     output,
-                    "{}{}",
-                    SetForegroundColor(Color::DarkYellow),
-                    str::replace(
-                        p.to_pretty_string().as_str(),
-                        "\n",
-                        format!("\n{}", SetForegroundColor(Color::DarkYellow)).as_str()
-                    )
+                    "{}",
+                    p.to_pretty_string().as_str().to_colored_json_auto()?,
                 )?;
             }
         }
