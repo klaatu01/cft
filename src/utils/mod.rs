@@ -46,7 +46,7 @@ pub async fn get_latest_logs(log_group_name: String, number: usize) -> Option<Ve
     let log_events_request = GetLogEventsRequest {
         log_group_name,
         log_stream_name,
-        limit: Some(10),
+        limit: Some(number as i64),
         ..Default::default()
     };
 

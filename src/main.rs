@@ -14,7 +14,7 @@ struct LogGroup {
 
 async fn head_logs(stack: String, number: usize) -> Result<(), Box<dyn std::error::Error>> {
     let mut output = Pager::new().unwrap();
-    if let Some(resources) = utils::describe_stack_resources(stack).await {
+    if let Some(resources) = utils::describe_stack_resources(stack.clone()).await {
         let logs_groups: Vec<String> = resources
             .iter()
             .filter(|x| x.resource_type == "AWS::Logs::LogGroup")
@@ -45,12 +45,20 @@ async fn head_logs(stack: String, number: usize) -> Result<(), Box<dyn std::erro
             }
         }
         minus::page_all(output)?;
+        Ok(())
+    } else {
+        println!(
+            "{}{}{}",
+            "CloudFormation Stack: ".red(),
+            stack.as_str().green().bold(),
+            " could not be found".red()
+        );
+        Ok(())
     }
-    Ok(())
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = App::new("cf-tools")
         .version("1.0")
         .author("Charles E. charlieede01@gmail.com")
@@ -60,7 +68,7 @@ async fn main() {
                 .about(
                     "Quickly get the most recent logs for each function in a CloudFormation Stack",
                 )
-                .arg(Arg::new("number").short('n').default_value("1"))
+                .arg(Arg::new("number").short('n').default_value("20"))
                 .arg("<INPUT>   'The arn or name of CloudFormation Stack'"),
         )
         .get_matches();
@@ -68,8 +76,8 @@ async fn main() {
         Some(("head-logs", sub_matches)) => {
             let number: usize = sub_matches.value_of("number").unwrap().parse().unwrap();
             let input = sub_matches.value_of("INPUT").unwrap();
-            head_logs(input.into(), number).await;
+            head_logs(input.into(), number).await
         }
-        _ => (),
+        _ => Ok(()),
     }
 }
