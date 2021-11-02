@@ -3,6 +3,11 @@ name = "cft"
 version = "0.1.0"
 edition = "2018"
 description = "Command line tools for cloudformation stacks"
+authors = ["Klaatu01"]
+license = "MIT"
+repository = "https://github.com/klaatu01/cft"
+keywords = ["cloudformation", "tools", "cli"]
+categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
